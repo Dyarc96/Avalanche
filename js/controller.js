@@ -1,7 +1,6 @@
 const Controller = function() {
 
-    this.onkeydown = function(e) {
-        let keycode = e.keyCode;
+    this.onkeydown = function(keycode) {
         switch(keycode) {
             case 37:
                 console.log('arrow right');
