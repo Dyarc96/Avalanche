@@ -13,6 +13,10 @@ window.onload = () => {
         display.render();
     });
 
+    let render = function() {
+        display.fill(game)
+    }
+
     window.addEventListener('keydown', e => {
         onKeyDown(e.keyCode);
     });

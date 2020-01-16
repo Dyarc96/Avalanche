@@ -38,5 +38,13 @@ const Game = function() {
     this.update = function() {
         this.world.update();
     }
+
+    Game.prototype = {
+        constructor: Game
+    };
+
+    Game.Player = function(x, y) {
+        this.color = '#ffffff'
+    }
     
 }
