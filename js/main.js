@@ -7,11 +7,10 @@ window.onload = () => {
     function onKeyDown (keycode){
         controller.onkeydown(keycode)
     }
-    
-    display.fillScreen();
 
     window.addEventListener('resize', () => {
         display.resize();
+        display.render();
     });
 
     window.addEventListener('keydown', e => {
