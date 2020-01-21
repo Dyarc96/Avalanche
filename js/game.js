@@ -29,14 +29,13 @@ const Game = function() {
       },
 
       collideObject: function(player, obstacle) {
+        // Left side
         if(player.x <= obstacle.x + obstacle.width
           && player.y === 56 && player.x + player.width >= obstacle.x ) {
-            console.log('collision1');
           player.x = player.x + player.width;
           player.velocity_x = 0;
         }
         if(player.x + player.width >= obstacle.x && player.y === 56 && player.x <= obstacle.x + obstacle.width) {
-          console.log('collision2');
         }
         // if && player.y === 56) {
         //   player.velocity_x = 0;
