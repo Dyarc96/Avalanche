@@ -13,6 +13,7 @@ window.onload = () => {
     var render = function() {
         display.fill(game.world.background_color);
         display.drawRectangle(game.world.player.x, game.world.player.y, game.world.player.width, game.world.player.height, game.world.player.color);
+        display.drawRectangle(game.world.obstacle.x, game.world.obstacle.y, game.world.obstacle.width, game.world.obstacle.height, game.world.obstacle.color)
         display.render();
     }
 
@@ -26,6 +27,7 @@ window.onload = () => {
         if(controller.up.active) {
             game.world.player.jump();
         }
+        // game.world.obstacle.collide();
 
         game.update();
     }

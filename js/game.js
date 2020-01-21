@@ -5,10 +5,11 @@ const Game = function() {
       background_color:"rgba(40,48,56,0.25)",
       friction:0.9,
       gravity:3,
-      player:new Game.Player(),
+      player: new Game.Player(),
+      obstacle: new Game.Obstacle(),
       height:72,
       width:128,
-      collideObject:function(object) {
+      collideWorld:function(object) {
   
         if (object.x < 0) { 
             object.x = 0;
@@ -27,12 +28,30 @@ const Game = function() {
         }
       },
 
+      collideObject: function(player, obstacle) {
+        if(player.x <= obstacle.x + obstacle.width
+          && player.y === 56 && player.x + player.width >= obstacle.x ) {
+            console.log('collision1');
+          player.x = player.x + player.width;
+          player.velocity_x = 0;
+        }
+        if(player.x + player.width >= obstacle.x && player.y === 56 && player.x <= obstacle.x + obstacle.width) {
+          console.log('collision2');
+        }
+        // if && player.y === 56) {
+        //   player.velocity_x = 0;
+        // }
+      },
+
+
       update:function() {
         this.player.velocity_y += this.gravity;
         this.player.update();
         this.player.velocity_x *= this.friction;
         this.player.velocity_y *= this.friction;
-        this.collideObject(this.player);
+        this.collideWorld(this.player);
+        this.collideWorld(this.obstacle);
+        this.collideObject(this.player, this.obstacle);
       }
   
     };
@@ -53,9 +72,26 @@ Game.Player = function(x, y) {
     this.velocity_x = 0;
     this.velocity_y = 0;
     this.width      = 16;
-    this.x          = 100;
-    this.y          = 50;
+    this.x          = 0;
+    this.y          = 100;
 };
+
+Game.Obstacle = function(x, y) {
+  this.color = '#5c045c';
+  this.height = 10;
+  this.width = 10;
+  this.velocity_x = 0;
+  this.velocity_y = 0
+  this.x = 50;
+  this.y = 100;
+}
+
+Game.Obstacle.prototype = {
+  constructor: Game.Obstacle,
+  collide: () => {
+    // console.log(tame);
+  }
+}
   
 Game.Player.prototype = {
   
