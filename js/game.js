@@ -29,17 +29,17 @@ const Game = function() {
       },
 
       collideObject: function(player, obstacle) {
-        // Left side
-        if(player.x <= obstacle.x + obstacle.width
-          && player.y === 56 && player.x + player.width >= obstacle.x ) {
-          player.x = player.x + player.width;
-          player.velocity_x = 0;
+        if(player.x + player.width >= obstacle.x + obstacle.width) {
+          if(player.x <= obstacle.x + obstacle.width && player.y === 56) {
+            player.x = obstacle.x + obstacle.width;
+            player.velocity_x = 0;
+          }
+        } else if (player.x + player.width < obstacle.x + obstacle.width) {
+          if(player.x + player.width >= obstacle.x && player.y === 56) {
+            player.x = obstacle.x - player.width;
+            player.velocity_x = 0;
+          }
         }
-        if(player.x + player.width >= obstacle.x && player.y === 56 && player.x <= obstacle.x + obstacle.width) {
-        }
-        // if && player.y === 56) {
-        //   player.velocity_x = 0;
-        // }
       },
 
 
@@ -71,8 +71,8 @@ Game.Player = function(x, y) {
     this.velocity_x = 0;
     this.velocity_y = 0;
     this.width      = 16;
-    this.x          = 0;
-    this.y          = 100;
+    this.x          = 100;
+    this.y          = 50;
 };
 
 Game.Obstacle = function(x, y) {
@@ -82,7 +82,7 @@ Game.Obstacle = function(x, y) {
   this.velocity_x = 0;
   this.velocity_y = 0
   this.x = 50;
-  this.y = 100;
+  this.y = 62;
 }
 
 Game.Obstacle.prototype = {
