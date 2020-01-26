@@ -11,9 +11,9 @@ window.onload = () => {
     }
 
     var render = function() {
-        display.fill(game.world.background_color);
-        display.drawRectangle(game.world.player.x, game.world.player.y, game.world.player.width, game.world.player.height, game.world.player.color);
-        display.drawRectangle(game.world.obstacle.x, game.world.obstacle.y, game.world.obstacle.width, game.world.obstacle.height, game.world.obstacle.color)
+        display.fill('#202830');
+        display.drawMap(game.world.map, game.world.columns);
+        display.drawPlayer(game.world.player, game.world.player.color1, game.world.player.color2);
         display.render();
     }
 
@@ -27,8 +27,6 @@ window.onload = () => {
         if(controller.up.active) {
             game.world.player.jump();
         }
-        // game.world.obstacle.collide();
-
         game.update();
     }
 
@@ -39,6 +37,19 @@ window.onload = () => {
 
     display.buffer.canvas.height = game.world.height;
     display.buffer.canvas.width = game.world.width;
+
+    display.tile_sheet.image.addEventListener('load', function(event) {
+        resize();
+        engine.start();
+    }, { once: true });
+
+    // display.background.addEventListener('load', function(event) {
+    //     resize();
+    //     engine.start();
+    // }, { once: true });
+
+    display.tile_sheet.image.src = "RoguelikeDungeonTileset.png";
+    // display.background.src = 'SkyBG.png';
 
     window.addEventListener('keydown', e => {
         onKeyDown(e.type, e.keyCode);
