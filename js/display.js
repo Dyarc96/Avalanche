@@ -10,23 +10,23 @@ const Display = function(canvas) {
 
       for(let i = map.length - 1; i > -1; --i) {
 
-        let value = map[i] - 1;
-        let source_x = (value % this.tile_sheet.columns) * this.tile_sheet.tile_size;
-        let source_y = Math.floor(value / this.tile_sheet.columns) * this.tile_sheet.tile_size;
-        let destination_x = (i % columns) * this.tile_sheet.tile_size;
-        let destination_y = Math.floor(i / columns) * this.tile_sheet.tile_size;
+        let val = map[i] - 1;
+        let src_x = (val % this.tile_sheet.columns) * this.tile_sheet.tile_size;
+        let src_y = Math.floor(val / this.tile_sheet.columns) * this.tile_sheet.tile_size;
+        let dest_x = (i % columns) * this.tile_sheet.tile_size;
+        let dest_y = Math.floor(i / columns) * this.tile_sheet.tile_size;
 
-        this.buffer.drawImage(this.tile_sheet.image, source_x, source_y, this.tile_sheet.tile_size,
-          this.tile_sheet.tile_size, destination_x, destination_y, this.tile_sheet.tile_size,
+        this.buffer.drawImage(this.tile_sheet.image, src_x, src_y, this.tile_sheet.tile_size,
+          this.tile_sheet.tile_size, dest_x, dest_y, this.tile_sheet.tile_size,
           this.tile_sheet.tile_size);
       }
     }
 
     this.drawPlayer = function(rectangle, color1, color2) {
       this.buffer.fillStyle = color1;
-      this.buffer.fillRect(Math.floor(rectangle.x), Math.floor(rectangle.y), rectangle.width, rectangle.height);
+      this.buffer.fillRect(Math.round(rectangle.x), Math.floor(rectangle.y), rectangle.width, rectangle.height);
       this.buffer.fillStyle = color2;
-      this.buffer.fillRect(Math.floor(rectangle.x + 2), Math.floor(rectangle.y + 2), rectangle.width - 4, rectangle.height - 4);
+      this.buffer.fillRect(Math.round(rectangle.x + 2), Math.floor(rectangle.y + 2), rectangle.width - 4, rectangle.height - 4);
     }
   
     this.fill = function(color) {
