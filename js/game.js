@@ -35,8 +35,8 @@
                          02,00,00,00,00,00,00,00,00,00,00,04,
                          02,00,00,00,00,00,00,11,08,08,09,04,
                          02,00,00,00,00,00,00,00,00,00,00,04,
+                         02,00,00,00,00,00,00,00,00,00,00,04,
                          02,00,07,00,00,00,00,00,00,00,00,04,
-                         02,00,06,00,00,00,00,00,00,00,00,04,
                          13,01,01,01,01,01,01,01,01,01,01,03];
     
     this.height = this.tile_size * this.rows;
@@ -112,36 +112,10 @@
     },
 
 
-  
-    // collideObject: function(player, obstacle) {
-    //   console.log(player.x + player.width, obstacle.x, player.y);
-    //   // Left side
-    //   // if(player.x <= obstacle.x + obstacle.width
-    //   //   && player.y === 56 && player.x + player.width >= obstacle.x ) {
-    //   //   player.x = obstacle.x + obstacle.width;
-    //   //   player.velocity_x = 0;
-    //   // }
-    //   if(player.x + player.width >= obstacle.x &&
-    //     player) {
-    //     console.log('place spotted');
-    //   }
-    //   // if(player.x + player.width >= obstacle.x && player.y === 56
-    //   //   && player.x + player.width <= obstacle.x + obstacle.width) {
-    //   //   console.log('fire');
-    //   //   player.x = 0;
-    //   //   player.velocity_x = 0;
-    //   // }
-    //   // if && player.y === 56) {
-    //   //   player.velocity_x = 0;
-    //   // }
-    // },
-  
     update: function() {
       this.world.update();
     }
   }
-
-  // Check location of the player
     
   Game.World.Player = function(x, y) {
       this.color1 = '#404040';
@@ -181,11 +155,11 @@
             this.collidePlatformTop(object, tile_y);
           break;
         case 02:
-            this.collidePlatformRight(object, tile_x, tile_size);
+            this.collidePlatformRight(object, tile_x + tile_size);
           break;
         case 03:
           if(this.collidePlatformTop(object, tile_y )) return;
-          this.collidePlatformRight(object, tile_x, tile_size);
+          this.collidePlatformRight(object, tile_x + tile_size);
           break;
         case 04:
             this.collidePlatformLeft(object, tile_x);
@@ -193,10 +167,13 @@
         case 05:
           break;
         case 06:
-          if(this.collidePlatformLeft(object, tile_x)) return;
-          this.collidePlatformRight(object, tile_x, tile_size)
+          if(this.collidePlatformRight(object, tile_x + tile_size))
+          this.collidePlatformLeft(object, tile_x)
           break;
         case 07:
+          if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+          if(this.collidePlatformLeft(object, tile_x)) return
+          this.collidePlatformTop(object, tile_y)
           // if(this.collidePlatformLeft(object, tile_x)) {
 
           // }
@@ -225,12 +202,13 @@
         case 10:
           break;
         case 11:
-            if(this.collidePlatformRight(object, tile_x)) {
+          if(this.collidePlatformLeft(object, tile_x)) {
+            return;
+          }
+            if(this.collidePlatformRight(object, tile_x + tile_size)) {
               return;
             } 
-            if(this.collidePlatformLeft(object, tile_x)) {
-              return;
-            }
+
             this.collidePlatformBottom(object, tile_x);
           break;
         case 12:
@@ -257,9 +235,13 @@
       }
       return false;
     },
-    collidePlatformRight: function(object, tile_x, tile_size) {
-      if(object.getLeft() > tile_x  && object.getOldLeft() <= tile_x + tile_size) {
-        object.setLeft(tile_x - 0.01);
+    collidePlatformRight: function(object, tile_x) {
+      console.log(tile_x, object.getLeft());
+      if(object.getLeft() < tile_x  && object.getOldLeft() <= tile_x) {
+        console.log('collision');
+        object.setLeft(tile_x + 0.01);
+        object.velocity_x = 0;
+        object.jumping = 0;
         return true;
       }
       return false;
@@ -312,11 +294,11 @@
         this.velocity_x = 0;
       },
       setLeft: function(tile_x) {
-        this.x = Math.round(tile_x) + this.width;
+        this.x = Math.round(tile_x);
         this.velocity_x = 0;
       },
       setTop: function(tile_y) {
-        this.y = Math.round(tile_y) + this.height;
+        this.y = Math.round(tile_y);
         this.velocity_y = 0;
         this.jumping = false;
       },
@@ -336,7 +318,6 @@
         return this.oldX;
       },
       getOldRight: function() {
-        console.log(this.oldX + this.width);
         return this.oldX + this.width;
       },
       getOldBottom: function() {
