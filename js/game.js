@@ -35,8 +35,8 @@
                          02,00,00,00,00,00,00,00,00,00,00,04,
                          02,00,00,00,00,00,00,11,08,08,09,04,
                          02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
                          02,00,07,00,00,00,00,00,00,00,00,04,
+                         02,00,06,00,00,00,00,00,00,00,00,04,
                          13,01,01,01,01,01,01,01,01,01,01,03];
     
     this.height = this.tile_size * this.rows;
@@ -153,71 +153,65 @@
       switch(collision) {
         case 01:
             this.collidePlatformTop(object, tile_y);
-          break;
+            break;
         case 02:
             this.collidePlatformRight(object, tile_x + tile_size);
-          break;
+            break;
         case 03:
-          if(this.collidePlatformTop(object, tile_y )) return;
-          this.collidePlatformRight(object, tile_x + tile_size);
-          break;
+            if(this.collidePlatformTop(object, tile_y )) return;
+            this.collidePlatformRight(object, tile_x + tile_size);
+            break;
         case 04:
             this.collidePlatformLeft(object, tile_x);
-          break;
+            break;
         case 05:
-          break;
+            if(this.collidePlatformTop(object, tile_y)) return;
+            this.collidePlatformLeft(object, tile_x);
+            break;
         case 06:
           if(this.collidePlatformRight(object, tile_x + tile_size))
-          this.collidePlatformLeft(object, tile_x)
-          break;
+            this.collidePlatformLeft(object, tile_x);
+            break;
         case 07:
-          if(this.collidePlatformRight(object, tile_x + tile_size)) return;
-          if(this.collidePlatformLeft(object, tile_x)) return
-          this.collidePlatformTop(object, tile_y)
-          // if(this.collidePlatformLeft(object, tile_x)) {
-
-          // }
-          // if(this.collidePlatformLeft(object, tile_x)) {
-          //   this.collidePlatformRight(object, tile_x)
-          //   this.collidePlatformTop(object, tile_y);
-          // }
-            // if(this.collidePlatformLeft(object, tile_x)) {
-            //   console.log('collision left');
-            //   if(this.collidePlatformRight(object, tile_x)) {
-            //     console.log('collision right');
-            //   }
-            // }
-            //   this.collidePlatformLeft(object, tile_x);
-            // } else if(this.collidePlatformRight(object, tile_x)) {
-            //   this.collidePlatformRight(object, tile_x);
-            // }
-          break;
+            if(this.collidePlatformTop(object, tile_y)) return;
+            if(this.collidePlatformLeft(object, tile_x)) return
+            this.collidePlatformRight(object, tile_x + tile_size)
+            break;
         case 08:
-            this.collidePlatformBottom(object, tile_y);
-          break;
+            this.collidePlatformBottom(object, tile_y + tile_size);
+            break;
         case 09:
-            if(this.collidePlatformBottom(object, tile_y)) {
-            }
-          break;
+            if(this.collidePlatformBottom(object, tile_y + tile_size)) return;
+            this.collidePlatformTop(object, tile_y + tile_size);
+            break;
         case 10:
-          break;
+            if(this.collidePlatformBottom(object, tile_y + tile_size)) returnl
+            this.collidePlatformLeft(object, tile_x);
+            break;
         case 11:
-          if(this.collidePlatformLeft(object, tile_x)) {
-            return;
-          }
-            if(this.collidePlatformRight(object, tile_x + tile_size)) {
-              return;
-            } 
-
-            this.collidePlatformBottom(object, tile_x);
-          break;
+            if(this.collidePlatformLeft(object, tile_x)) return;
+            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+              this.collidePlatformBottom(object, tile_t);
+            break;
         case 12:
-          break;
+            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+            this.collidePlatformBottom(object, tile_y + tile_size);
+            break;
         case 13:
+            if(this.collidePlatformTop(object, tile_y)) return;
+            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+            this.collidePlatformBottom(object, tile_y + tile_size);
           break;
         case 14:
+            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+            if(this.collidePlatformLeft(object, tile_x)) return;
+            this.collidePlatformBottom(object, tile_y + tile_size);
           break;
         case 15:
+            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+            if(this.collidePlatformLeft(object, tile_x)) return;
+            if(this.collidePlatformBottom(object, tile_y + tile_size)) return;
+            this.collidePlatformTop(object, tile_y + tile_size);
           break;
         default: 
           break;
@@ -236,10 +230,8 @@
       return false;
     },
     collidePlatformRight: function(object, tile_x) {
-      console.log(tile_x, object.getLeft());
       if(object.getLeft() < tile_x  && object.getOldLeft() <= tile_x) {
-        console.log('collision');
-        object.setLeft(tile_x + 0.01);
+        object.setLeft(tile_x - 0.01);
         object.velocity_x = 0;
         object.jumping = 0;
         return true;
@@ -254,7 +246,7 @@
       return false
     },
     collidePlatformBottom: function(object, tile_y) {
-      if(object.getTop() > tile_y && object.getOldTop() <= tile_y) {
+      if(object.getTop() < tile_y && object.getOldBottom() >= tile_y) {
         object.setTop(tile_y - 0.01);
         return true;
       }
