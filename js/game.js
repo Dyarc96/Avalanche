@@ -31,12 +31,12 @@
               
     this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,
                          02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,09,09,13,00,00,00,00,00,00,00,04,
                          02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,11,08,08,09,04,
                          02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,07,00,00,00,00,00,00,00,00,04,
-                         02,00,06,00,00,00,00,00,00,00,00,04,
+                         02,00,00,00,00,00,00,00,00,00,00,04,
+                         02,00,00,00,00,00,00,00,00,00,00,04,
+                         02,00,00,00,00,00,00,00,00,00,00,04,
+                         02,00,00,00,00,00,00,00,00,00,00,04,
                          13,01,01,01,01,01,01,01,01,01,01,03];
     
     this.height = this.tile_size * this.rows;
@@ -116,8 +116,19 @@
       this.world.update();
     }
   }
+
+  Game.World.Object = function(x, y, height, width) {
+    this.height = height;
+    this.width = width;
+    this.x = x;
+    this.y = y;
+    this.oldX = x;
+    this.oldY = y;
+  }
     
   Game.World.Player = function(x, y) {
+      Game.World.Object.call(this, 100, 100, 12, 12);
+
       this.color1 = '#404040';
       this.color2 = '#f0f0f0';
       this.height = 16;
@@ -213,8 +224,6 @@
             if(this.collidePlatformBottom(object, tile_y + tile_size)) return;
             this.collidePlatformTop(object, tile_y + tile_size);
           break;
-        default: 
-          break;
       }
     }
 
@@ -233,7 +242,6 @@
       if(object.getLeft() < tile_x  && object.getOldLeft() <= tile_x) {
         object.setLeft(tile_x - 0.01);
         object.velocity_x = 0;
-        object.jumping = 0;
         return true;
       }
       return false;
@@ -269,9 +277,11 @@
     
       moveLeft: function()  { 
         this.velocity_x -= 0.7; 
+        this.jumping = false;
       },
       moveRight: function() { 
         this.velocity_x += 0.7; 
+        this.jumping = false;
       },
       getPosition: function() {
         console.log(this.x, this.y);
@@ -284,10 +294,12 @@
       setRight: function(tile_x) {
         this.x = Math.round(tile_x) - this.width;
         this.velocity_x = 0;
+        this.jumping = false;
       },
       setLeft: function(tile_x) {
         this.x = Math.round(tile_x);
         this.velocity_x = 0;
+        this.jumping = false;
       },
       setTop: function(tile_y) {
         this.y = Math.round(tile_y);
@@ -337,3 +349,5 @@
         this.y += this.velocity_y;
       }
   };
+
+Game.World.Player.prototype.constructor = Game.World.Player;
