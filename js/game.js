@@ -19,6 +19,7 @@
     this.rows = 9;
 
     this.tile_size = 16;
+    
     this.map = [01,01,01,01,01,01,01,01,01,01,01,01,
                 01,02,02,02,02,02,02,02,02,02,02,01,
                 01,01,01,17,02,02,02,02,10,02,02,01,
@@ -31,26 +32,16 @@
               
     this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,
                          02,00,00,00,00,00,00,00,00,00,00,04,
+                         02,08,08,13,00,00,00,00,00,00,00,04,
                          02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
+                         02,00,00,00,00,00,00,00,08,08,00,04,
+                         02,00,00,00,00,15,00,00,00,00,00,04,
+                         02,00,07,00,00,00,00,00,00,00,00,04,
+                         02,00,06,00,00,00,00,00,00,00,00,04,
                          13,01,01,01,01,01,01,01,01,01,01,03];
     
     this.height = this.tile_size * this.rows;
     this.width = this.tile_size * this.columns;
-  
-  
-    this.update = function() {
-      this.player.velocity_y += this.gravity;
-      this.player.update();
-      this.player.velocity_x *= this.friction;
-      this.player.velocity_y *= this.friction;
-      this.collideWorld(this.player);
-      this.getPosition()
-    }
   
   }
   
@@ -113,7 +104,12 @@
 
 
     update: function() {
-      this.world.update();
+      this.player.velocity_y += this.gravity;
+      this.player.update();
+      this.player.velocity_x *= this.friction;
+      this.player.velocity_y *= this.friction;
+      this.collideWorld(this.player);
+      this.getPosition()
     }
   }
 
@@ -136,29 +132,8 @@
       this.velocity_x = 0;
       this.velocity_y = 0;
       this.width = 16;
-      this.x = x;
-      this.y = y;
-      this.oldX = x;
-      this.oldY = y;
   };
   
-  // Game.WorldObstacle = function(x, y) {
-  //   this.color = '#5c045c';
-  //   this.height = 10;
-  //   this.width = 10;
-  //   this.velocity_x = 0;
-  //   this.velocity_y = 0
-  //   this.x = 50;
-  //   this.y = 100;
-  // }
-  
-  // Game.Obstacle.prototype = {
-  //   constructor: Game.Obstacle,
-  //   collide: () => {
-  //     // console.log(tame);
-  //   }
-  // }
-
   Game.World.Collider = function() {
     this.collide = function(collision, object, tile_y, tile_x, tile_size) {
       switch(collision) {
@@ -219,10 +194,10 @@
             this.collidePlatformBottom(object, tile_y + tile_size);
           break;
         case 15:
-            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
-            if(this.collidePlatformLeft(object, tile_x)) return;
-            if(this.collidePlatformBottom(object, tile_y + tile_size)) return;
-            this.collidePlatformTop(object, tile_y + tile_size);
+          if(this.collidePlatformTop(object, tile_y)) return;
+          if(this.collidePlatformLeft(object, tile_x)) return;
+          if(this.collidePlatformRight(object, tile_x + tile_size)) return;
+            this.collidePlatformBottom(object, tile_y + tile_size)
           break;
       }
     }
@@ -234,13 +209,15 @@
     collidePlatformTop: function(object, tile_y) {
       if(object.getBottom() > tile_y && object.getOldBottom() <= tile_y) {
         object.setBottom(tile_y - 0.01);
+        object.velocity_y = 0;
+        object.jumping    = false;
         return true;
       }
       return false;
     },
     collidePlatformRight: function(object, tile_x) {
       if(object.getLeft() < tile_x  && object.getOldLeft() <= tile_x) {
-        object.setLeft(tile_x - 0.01);
+        object.setLeft(tile_x);
         object.velocity_x = 0;
         return true;
       }
@@ -249,13 +226,15 @@
     collidePlatformLeft: function(object, tile_x) {
       if(object.getRight() > tile_x && object.getOldRight() <= tile_x) {
         object.setRight(tile_x - 0.01);
+        this.velocity_x = 0;
         return true;
       }
       return false
     },
     collidePlatformBottom: function(object, tile_y) {
       if(object.getTop() < tile_y && object.getOldBottom() >= tile_y) {
-        object.setTop(tile_y - 0.01);
+        object.setTop(tile_y);
+        object.velocity_y = 0;
         return true;
       }
       return false
@@ -265,6 +244,7 @@
   Game.World.Player.prototype = {
     
       constructor : Game.Player,
+
       jump:function() {
     
         if (!this.jumping) {
@@ -277,34 +257,24 @@
     
       moveLeft: function()  { 
         this.velocity_x -= 0.7; 
-        this.jumping = false;
       },
       moveRight: function() { 
         this.velocity_x += 0.7; 
-        this.jumping = false;
       },
       getPosition: function() {
         console.log(this.x, this.y);
       },
       setBottom: function(tile_y) {
         this.y = Math.round(tile_y) - this.height;
-        this.velocity_y = 0;
-        this.jumping = false;
       },
       setRight: function(tile_x) {
         this.x = Math.round(tile_x) - this.width;
-        this.velocity_x = 0;
-        this.jumping = false;
       },
       setLeft: function(tile_x) {
         this.x = Math.round(tile_x);
-        this.velocity_x = 0;
-        this.jumping = false;
       },
       setTop: function(tile_y) {
         this.y = Math.round(tile_y);
-        this.velocity_y = 0;
-        this.jumping = false;
       },
       getLeft: function() { 
         return this.x;
