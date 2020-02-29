@@ -14,7 +14,6 @@ const Controller = function() {
                 break;
             case 39:
                 this.right.getInput(down);
-                break;
         }
     };
 };
@@ -31,7 +30,7 @@ Controller.ButtonInput.prototype = {
     constructor: Controller.ButtonInput,
 
     getInput: function(down) {
-        if(this.down !== down)
+        if(this.down != down)
             this.active = down;
         this.down = down;
     }

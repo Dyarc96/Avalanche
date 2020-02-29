@@ -50,7 +50,16 @@
     constructor: Game.World,
   
     collideWorld: function(object) {
-    
+      let playerBottom = object.getBottom();
+      let playerTop = object.getTop();
+      let playerLeft = object.getLeft();
+      let playerRight = object.getRight();
+      let bottomTile = playerBottom / this.tile_size;
+      let leftTile = playerLeft / this.tile_size;
+      let rightTile = playerRight / this.tile_size;
+      let topTile = playerTop / this.tile_size;
+
+
       if (object.x < 0) { 
           object.x = 0;
           object.velocity_x = 0; 
@@ -66,20 +75,8 @@
            object.y = this.height - object.height; 
           object.velocity_y = 0;
       }
-    },
-
-    getPosition: function(object) {
-      let playerBottom = this.player.getBottom();
-      let playerTop = this.player.getTop();
-      let playerLeft = this.player.getLeft();
-      let playerRight = this.player.getLeft() + this.player.width;
-      let bottomTile = playerBottom / this.tile_size;
-      let leftTile = playerLeft / this.tile_size;
-      let rightTile = playerRight / this.tile_size;
-      let topTile = playerTop / this.tile_size;
 
       let top, right, bottom, left, value;
-
 
       top = Math.floor(this.player.getTop() / this.tile_size);
       right = Math.floor(this.player.getRight() / this.tile_size);
@@ -102,14 +99,12 @@
       this.collider.collide(value, this.player, bottom * this.tile_size, left * this.tile_size, this.tile_size);
     },
 
-
     update: function() {
       this.player.velocity_y += this.gravity;
       this.player.update();
       this.player.velocity_x *= this.friction;
       this.player.velocity_y *= this.friction;
       this.collideWorld(this.player);
-      this.getPosition()
     }
   }
 
@@ -121,19 +116,63 @@
     this.oldX = x;
     this.oldY = y;
   }
-    
-  Game.World.Player = function(x, y) {
-      Game.World.Object.call(this, 100, 100, 12, 12);
 
-      this.color1 = '#404040';
-      this.color2 = '#f0f0f0';
-      this.height = 16;
-      this.jumping = true;
-      this.velocity_x = 0;
-      this.velocity_y = 0;
-      this.width = 16;
-  };
-  
+  Game.World.Object.prototype = {
+    constructor: Game.World.Object,
+
+    getPosition: function() {
+      console.log(this.x, this.y);
+    },
+    setBottom: function(tile_y) {
+      this.y = Math.round(tile_y) - this.height;
+    },
+    setRight: function(tile_x) {
+      this.x = Math.round(tile_x) - this.width;
+    },
+    setLeft: function(tile_x) {
+      this.x = Math.round(tile_x);
+    },
+    setTop: function(tile_y) {
+      this.y = Math.round(tile_y);
+    },
+    getLeft: function() { 
+      return this.x;
+    },
+    getRight: function() { 
+      return this.x + this.width;
+    },
+    getBottom: function() {
+      return this.y + this.height;
+    },
+    getTop: function() {
+      return this.y;
+    },
+    getOldLeft: function() {
+      return this.oldX;
+    },
+    getOldRight: function() {
+      return this.oldX + this.width;
+    },
+    getOldBottom: function() {
+      return this.oldY + this.height;
+    },
+    getOldTop: function(){
+      return this.oldY;
+    },
+    setOldLeft: function(x) {
+      this.oldX = x;
+    },
+    setOldRight: function(x) {
+      this.oldX = x - this.width;
+    },
+    setOldBottom: function(y) {
+      this.oldY = y - this.height;
+    },
+    setOldTop: function(y) {
+      this.oldY = y;
+    },
+  }
+
   Game.World.Collider = function() {
     this.collide = function(collision, object, tile_y, tile_x, tile_size) {
       switch(collision) {
@@ -240,6 +279,16 @@
       return false
     }
   }
+      
+  Game.World.Player = function(x, y) {
+    Game.World.Object.call(this, 100, 100, 16, 16);
+
+    this.color1 = '#404040';
+    this.color2 = '#f0f0f0';
+    this.jumping = true;
+    this.velocity_x = 0;
+    this.velocity_y = 0;
+};
     
   Game.World.Player.prototype = {
     
@@ -254,64 +303,14 @@
         }
     
       },
-    
+
       moveLeft: function()  { 
         this.velocity_x -= 0.7; 
       },
       moveRight: function() { 
         this.velocity_x += 0.7; 
       },
-      getPosition: function() {
-        console.log(this.x, this.y);
-      },
-      setBottom: function(tile_y) {
-        this.y = Math.round(tile_y) - this.height;
-      },
-      setRight: function(tile_x) {
-        this.x = Math.round(tile_x) - this.width;
-      },
-      setLeft: function(tile_x) {
-        this.x = Math.round(tile_x);
-      },
-      setTop: function(tile_y) {
-        this.y = Math.round(tile_y);
-      },
-      getLeft: function() { 
-        return this.x;
-      },
-      getRight: function() { 
-        return this.x + this.width;
-      },
-      getBottom: function() {
-        return this.y + this.height;
-      },
-      getTop: function() {
-        return this.y;
-      },
-      getOldLeft: function() {
-        return this.oldX;
-      },
-      getOldRight: function() {
-        return this.oldX + this.width;
-      },
-      getOldBottom: function() {
-        return this.oldY + this.height;
-      },
-      getOldTop: function(){
-        return this.oldY;
-      },
-      setOldLeft: function(x) {
-        this.oldX = x;
-      },
-      setOldRight: function(x) {
-        this.oldX = x - this.width;
-      },
-      setOldBottom: function(y) {
-        this.oldY = y - this.height;
-      },
-      setOldTop: function(y) {
-        this.oldY = y;
-      },
+    
       update:function() {
         this.oldX = this.x;
         this.oldY = this.y;
@@ -320,4 +319,5 @@
       }
   };
 
+Object.assign(Game.World.Player.prototype, Game.World.Object.prototype);
 Game.World.Player.prototype.constructor = Game.World.Player;

@@ -32,6 +32,7 @@ window.onload = () => {
         }
         if(controller.up.active) {
             game.world.player.jump();
+            controller.up.active = false;
         }
         game.update();
     }
@@ -44,10 +45,10 @@ window.onload = () => {
     display.buffer.canvas.height = game.world.height;
     display.buffer.canvas.width = game.world.width;
 
-    display.tile_sheet.image.onload = (e) => {
+    display.tile_sheet.image.addEventListener('load', e => {
         resize();
         engine.start();
-    };
+    }, { once: true});
 
     // display.background.addEventListener('load', function(event) {
     //     resize();
@@ -68,6 +69,5 @@ window.onload = () => {
     window.addEventListener('resize', () => {
         resize();
     });
-
     resize();
 }
