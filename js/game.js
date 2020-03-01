@@ -31,13 +31,13 @@
                 01,01,01,01,01,01,01,01,01,09,01,01];
               
     this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,08,08,13,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,00,00,00,04,
-                         02,00,00,00,00,00,00,00,08,08,00,04,
-                         02,00,00,00,00,15,00,00,00,00,00,04,
-                         02,00,07,00,00,00,00,00,00,00,00,04,
-                         02,00,06,00,00,00,00,00,00,00,00,04,
+                         04,00,00,00,00,00,00,00,00,00,00,02,
+                         04,08,08,13,00,00,00,00,00,00,00,02,
+                         04,00,00,00,00,00,00,00,00,00,00,02,
+                         04,00,00,00,00,00,00,11,09,09,09,02,
+                         04,00,00,00,00,15,00,00,00,00,00,02,
+                         04,00,07,00,00,00,00,00,00,00,00,02,
+                         04,00,06,00,00,00,00,00,00,00,00,02,
                          13,01,01,01,01,01,01,01,01,01,01,03];
     
     this.height = this.tile_size * this.rows;
@@ -78,8 +78,8 @@
 
       let top, right, bottom, left, value;
 
-      top = Math.floor(this.player.getTop() / this.tile_size);
-      right = Math.floor(this.player.getRight() / this.tile_size);
+      top = Math.floor(topTile);
+      right = Math.floor(rightTile);
       value = this.collisionMap[top * this.columns + right];
       this.collider.collide(value, this.player, top * this.tile_size, right * this.tile_size, this.tile_size);
 
@@ -180,21 +180,21 @@
             this.collidePlatformTop(object, tile_y);
             break;
         case 02:
-            this.collidePlatformRight(object, tile_x + tile_size);
+            this.collidePlatformLeft(object, tile_x);
             break;
         case 03:
-            if(this.collidePlatformTop(object, tile_y )) return;
-            this.collidePlatformRight(object, tile_x + tile_size);
+            if(this.collidePlatformTop(object, tile_y)) return;
+            this.collidePlatformLeft(object, tile_x)
             break;
         case 04:
-            this.collidePlatformLeft(object, tile_x);
+            this.collidePlatformRight(object, tile_x + tile_size);
             break;
         case 05:
             if(this.collidePlatformTop(object, tile_y)) return;
-            this.collidePlatformLeft(object, tile_x);
+            this.collidePlatformRight(object, tile_x + tile_size);
             break;
         case 06:
-          if(this.collidePlatformRight(object, tile_x + tile_size))
+            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
             this.collidePlatformLeft(object, tile_x);
             break;
         case 07:
@@ -207,16 +207,16 @@
             break;
         case 09:
             if(this.collidePlatformBottom(object, tile_y + tile_size)) return;
-            this.collidePlatformTop(object, tile_y + tile_size);
+            this.collidePlatformTop(object, tile_y);
             break;
         case 10:
-            if(this.collidePlatformBottom(object, tile_y + tile_size)) returnl
+            if(this.collidePlatformBottom(object, tile_y + tile_size)) return;
             this.collidePlatformLeft(object, tile_x);
             break;
         case 11:
+            if(this.collidePlatformTop(object, tile_y)) return;
             if(this.collidePlatformLeft(object, tile_x)) return;
-            if(this.collidePlatformRight(object, tile_x + tile_size)) return;
-              this.collidePlatformBottom(object, tile_t);
+              this.collidePlatformBottom(object, tile_y + tile_size);
             break;
         case 12:
             if(this.collidePlatformRight(object, tile_x + tile_size)) return;
@@ -255,7 +255,7 @@
       return false;
     },
     collidePlatformRight: function(object, tile_x) {
-      if(object.getLeft() < tile_x  && object.getOldLeft() <= tile_x) {
+      if(object.getLeft() < tile_x  && object.getOldLeft() >= tile_x) {
         object.setLeft(tile_x);
         object.velocity_x = 0;
         return true;
@@ -271,7 +271,7 @@
       return false
     },
     collidePlatformBottom: function(object, tile_y) {
-      if(object.getTop() < tile_y && object.getOldBottom() >= tile_y) {
+      if(object.getTop() < tile_y && object.getOldTop() >= tile_y) {
         object.setTop(tile_y);
         object.velocity_y = 0;
         return true;
@@ -281,7 +281,7 @@
   }
       
   Game.World.Player = function(x, y) {
-    Game.World.Object.call(this, 100, 100, 16, 16);
+    Game.World.Object.call(this, 100, 100, 12, 12);
 
     this.color1 = '#404040';
     this.color2 = '#f0f0f0';

@@ -20,12 +20,6 @@ window.onload = () => {
     var update = function() {
         if(controller.left.active) {
             game.world.player.moveLeft();
-            // let num = game.world.player.getLeft();
-            // let numOfCol = (num * game.world.columns)/game.world.width;
-            // console.log(numOfCol.toFixed(1));
-            // console.log(game.world.player.getLeft());
-            // console.log(game.world.player.getLeft())
-            // console.log(game.world.player.getRight());
         }
         if(controller.right.active) {
             game.world.player.moveRight();
@@ -50,13 +44,7 @@ window.onload = () => {
         engine.start();
     }, { once: true});
 
-    // display.background.addEventListener('load', function(event) {
-    //     resize();
-    //     engine.start();
-    // }, { once: true });
-
     display.tile_sheet.image.src = "tile_map1.png";
-    // display.background.src = 'SkyBG.png';
 
     window.addEventListener('keydown', e => {
         onKeyDown(e.type, e.keyCode);
