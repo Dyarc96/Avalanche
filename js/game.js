@@ -13,32 +13,32 @@
   Game.World = function(friction = 0.9, gravity = 3) {
     this.friction = friction;
     this.gravity = gravity;
-    this.player = new Game.World.Player(100, 100);
+    this.player = new Game.World.Object.Player(100, 100);
     this.collider = new Game.World.Collider();
-    this.columns = 12;
+    this.columns = 14;
     this.rows = 9;
 
     this.tile_size = 16;
     
-    this.map = [01,01,01,01,01,01,01,01,01,01,01,01,
-                01,02,02,02,02,02,02,02,02,02,02,01,
-                01,01,01,17,02,02,02,02,10,02,02,01,
-                01,02,02,02,02,18,02,02,02,02,02,03,
-                01,02,02,02,02,02,02,01,09,01,01,01,
-                01,02,02,18,02,01,02,02,02,18,02,01,
-                01,02,17,02,02,02,02,02,02,02,02,01,
-                01,02,01,02,02,02,02,26,02,02,02,01,
-                01,01,01,01,01,01,01,01,01,09,01,01];
+    this.map =          [09,09,09,09,09,09,09,09,09,09,09,09,09,09,
+                         09,10,10,10,10,10,10,10,10,10,10,10,10,09,
+                         09,13,09,17,10,10,10,10,10,14,10,10,10,09,
+                         09,10,10,10,10,10,10,10,10,10,10,10,10,09,
+                         09,10,10,10,10,10,10,09,09,17,09,09,17,09,
+                         09,10,10,18,10,10,10,10,10,18,10,10,10,09,
+                         09,10,17,10,10,10,10,10,10,10,10,10,10,09,
+                         09,10,09,10,10,10,10,10,10,10,10,10,10,09,
+                         09,09,09,09,09,09,09,09,09,09,09,09,09,09];
               
-    this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,
-                         04,00,00,00,00,00,00,00,00,00,00,02,
-                         04,08,08,13,00,00,00,00,00,00,00,02,
-                         04,00,00,00,00,00,00,00,00,00,00,02,
-                         04,00,00,00,00,00,00,11,09,09,09,02,
-                         04,00,00,00,00,15,00,00,00,00,00,02,
-                         04,00,07,00,00,00,00,00,00,00,00,02,
-                         04,00,06,00,00,00,00,00,00,00,00,02,
-                         13,01,01,01,01,01,01,01,01,01,01,03];
+    this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,08,08,
+                         04,00,00,00,00,00,00,00,00,00,00,00,00,02,
+                         04,08,08,13,00,00,00,00,00,00,00,00,00,02,
+                         04,00,00,00,00,00,00,00,00,00,00,00,00,02,
+                         04,00,00,00,00,00,00,11,09,09,09,09,09,02,
+                         04,00,00,00,00,15,00,00,00,00,00,00,00,02,
+                         04,00,07,00,00,00,00,00,00,00,00,00,00,02,
+                         04,00,06,00,00,00,00,00,00,00,00,00,00,02,
+                         13,01,01,01,01,01,01,01,01,01,01,03,08,08];
     
     this.height = this.tile_size * this.rows;
     this.width = this.tile_size * this.columns;
@@ -280,7 +280,7 @@
     }
   }
       
-  Game.World.Player = function(x, y) {
+  Game.World.Object.Player = function(x, y) {
     Game.World.Object.call(this, 100, 100, 12, 12);
 
     this.color1 = '#404040';
@@ -290,9 +290,9 @@
     this.velocity_y = 0;
 };
     
-  Game.World.Player.prototype = {
+  Game.World.Object.Player.prototype = {
     
-      constructor : Game.Player,
+      constructor : Game.World.Object.Player,
 
       jump:function() {
     
@@ -319,5 +319,14 @@
       }
   };
 
-Object.assign(Game.World.Player.prototype, Game.World.Object.prototype);
-Game.World.Player.prototype.constructor = Game.World.Player;
+  Game.World.TileSet = function(tile_size, columns) {
+    this.tile_size = tile_size;
+    this.columns = columns;
+  }
+
+  Game.World.TileSet.prototype = {
+    constructor: Game.World.TileSet
+  }
+
+Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);
+Game.World.Object.Player.prototype.constructor = Game.World.Object.Player;

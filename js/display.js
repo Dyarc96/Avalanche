@@ -4,7 +4,7 @@ const Display = function(canvas) {
     this.context = canvas.getContext("2d");
     this.background = new Image();
 
-    this.tile_sheet = new Display.TileSheet(16, 8);
+    this.tile_sheet = new Display.TileSheet(16, 4);
 
     this.drawMap = function(map, columns) {
 
