@@ -1,5 +1,21 @@
 window.onload = () => {
     "use strict"
+
+    const AssetManager = function() {
+        this.tile_set_image = undefined;
+    } 
+
+    AssetManager.prototype = {
+        constructor: Game.AssetManager,
+        loadTileSetImage: function(url, callback) {
+            this.tile_set_image = new Image();
+
+            this.tile_set_image.addEventListener('load', e => {
+                callback();
+            }, { once: true});
+            this.tile_set_image = url;
+        }
+    }
     
     var onKeyDown = function(keytype, keycode){
         controller.onkeydown(keytype, keycode);
@@ -35,16 +51,15 @@ window.onload = () => {
     var controller = new Controller();
     var engine = new Engine(1000/30, render, update);
     var game = new Game();
+    var assetmanager = new AssetManager();
 
     display.buffer.canvas.height = game.world.height;
     display.buffer.canvas.width = game.world.width;
 
-    display.tile_sheet.image.addEventListener('load', e => {
+    assetmanager.loadTileSetImage('tile_map1.png', () => {
         resize();
         engine.start();
-    }, { once: true});
-
-    display.tile_sheet.image.src = "tile_map1.png";
+    })
 
     window.addEventListener('keydown', e => {
         onKeyDown(e.type, e.keyCode);
@@ -57,5 +72,4 @@ window.onload = () => {
     window.addEventListener('resize', () => {
         resize();
     });
-    resize();
 }
