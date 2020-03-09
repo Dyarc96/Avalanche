@@ -8,12 +8,13 @@ window.onload = () => {
     AssetManager.prototype = {
         constructor: Game.AssetManager,
         loadTileSetImage: function(url, callback) {
+            
             this.tile_set_image = new Image();
 
             this.tile_set_image.addEventListener('load', e => {
                 callback();
             }, { once: true});
-            this.tile_set_image = url;
+            this.tile_set_image.src = url;
         }
     }
     
@@ -27,8 +28,9 @@ window.onload = () => {
     }
 
     var render = function() {
+        // Here we are doinh important thingsa
         display.fill('#202830');
-        display.drawMap(game.world.map, game.world.columns);
+        display.drawMap(game.world.map, game.world.columns, assetmanager.tile_set_image);
         display.drawPlayer(game.world.player, game.world.player.color1, game.world.player.color2);
         display.render();
     }
@@ -57,6 +59,7 @@ window.onload = () => {
     display.buffer.canvas.width = game.world.width;
 
     assetmanager.loadTileSetImage('tile_map1.png', () => {
+        console.log('eoeoe');
         resize();
         engine.start();
     })
@@ -70,6 +73,9 @@ window.onload = () => {
     });
 
     window.addEventListener('resize', () => {
+        console.log('soos');
         resize();
     });
+
+    render();
 }
