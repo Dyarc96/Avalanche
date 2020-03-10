@@ -15,6 +15,7 @@
     this.gravity = gravity;
     this.player = new Game.World.Object.Player(100, 100);
     this.collider = new Game.World.Collider();
+    this.tileset = new Game.World.TileSet(8, 16);
     this.columns = 14;
     this.rows = 9;
 
@@ -277,33 +278,49 @@
     },
   }
 
-  Game.World.Object.Animator = function(frame_set, mode) {
+  Game.World.Object.Animator = function(frame_set, delay) {
+    console.log(frame_set, delay);
     this.count = 0;
-    this.delay = 0;
-    this.frame_set = undefined;
+    this.delay = (delay >= 1) ? delay : 1;
+    this.frame_set = frame_set;
     this.frame_index = 0;
-    this.frame_value = this.frame_set[this.frame_index];
-    this.mode = mode;
+    console.log(frame_set);
+    this.frame_value = frame_set[0];
+    this.mode = "pause";
   }
 
   Game.World.Object.Animator.prototype = {
     constructor: Game.World.Object.Animator,
-    loop: function(frame_set, frame_index) {
+    loop: function() {
+      this.count ++;
       while(this.count > 0) {
         this.count -= this.delay;
-        (frame_index < this.frame_set.length) ? frame_index + 1 : 0
+        this.frame_index = (this.frame_index < this.frame_set.length - 1) ? this.frame_index + 1 : 0;
+        this.frame_value = this.frame_set[this.frame_index];
       }
     },
-    changeFrameSet: function() {
+    changeFrameSet: function(frame_set, mode, delay = 10, frame_index = 0) {
+      if (this.frame_set === frame_set) { return ;}
 
+      this.count = 0;
+      this.delay = delay;
+      this.frame_set = frame.set;
+      this.frame_index = frame_index;
+      this.frame_value = frame_set[frame_index];
+      this.mode = mode;
     },
     animate: function() {
-
+      switch(this.mode) {
+        case "loop" : this.loop(); break;
+        case "pause" : break;
+      }
     }
   }
       
   Game.World.Object.Player = function(x, y) {
     Game.World.Object.call(this, 100, 100, 12, 12);
+    let frame = Game.World.Object.Player.prototype.frame_sets["idle_right"];
+    Game.World.Object.Animator.call(this, frame, 10);
 
     this.color1 = '#404040';
     this.color2 = '#f0f0f0';
@@ -317,12 +334,14 @@
     
       constructor : Game.World.Object.Player,
 
-      frame_sets: [[0, 1], 
-                  [2, 3, 4],
-                  [5, 6, 7, 8],
-                  [9, 10]
-                  [11, 12, 13],
-                  [14, 15, 16, 17]],
+      frame_sets: {
+        "idle_right": [0, 1], 
+        "walk_right": [2, 3, 4],
+        "jump_right": [5, 6, 7, 8],
+        "idle_left": [9, 10],
+        "walk_left": [11, 12, 13],
+        "jump_left": [14, 15, 16, 17]
+      },
 
       jump:function() {
     

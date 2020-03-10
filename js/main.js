@@ -29,6 +29,9 @@ window.onload = () => {
 
     var render = function() {
         // Here we are doinh important thingsa
+        let frame = game.world.tileset.frames[game.world.player.frame_value];
+        console.log(frame);
+
         display.fill('#202830');
         display.drawMap(game.world.map, game.world.columns, assetmanager.tile_set_image);
         display.drawPlayer(game.world.player, game.world.player.color1, game.world.player.color2);
