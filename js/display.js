@@ -20,11 +20,8 @@ const Display = function(canvas) {
       }
     }
 
-    this.drawPlayer = function(rectangle, color1, color2) {
-      this.buffer.fillStyle = color1;
-      this.buffer.fillRect(Math.round(rectangle.x), Math.floor(rectangle.y), rectangle.width, rectangle.height);
-      this.buffer.fillStyle = color2;
-      this.buffer.fillRect(Math.round(rectangle.x + 2), Math.floor(rectangle.y + 2), rectangle.width - 4, rectangle.height - 4);
+    this.drawPlayer = function(image, source_x, source_y, destination_x, destination_y, width, height) {
+      this.buffer.drawImage(image, source_x, source_y, width, height, Math.round(destination_x), Math.round(destination_y), width, height);
     }
   
     this.fill = function(color) {

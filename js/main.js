@@ -6,7 +6,9 @@ window.onload = () => {
     } 
 
     AssetManager.prototype = {
+        
         constructor: Game.AssetManager,
+
         loadTileSetImage: function(url, callback) {
             
             this.tile_set_image = new Image();
@@ -28,13 +30,12 @@ window.onload = () => {
     }
 
     var render = function() {
-        // Here we are doinh important thingsa
         let frame = game.world.tileset.frames[game.world.player.frame_value];
-        console.log(frame);
-
-        display.fill('#202830');
         display.drawMap(game.world.map, game.world.columns, assetmanager.tile_set_image);
-        display.drawPlayer(game.world.player, game.world.player.color1, game.world.player.color2);
+        display.drawPlayer(assetmanager.tile_set_image,
+            frame.x, frame.y,
+            game.world.player.x + Math.floor(game.world.player.width * 0.5 - frame.width * 0.5) + frame.offsetX,
+            game.world.player.y + frame.offsetY, frame.width, frame.height);
         display.render();
     }
 
@@ -62,7 +63,6 @@ window.onload = () => {
     display.buffer.canvas.width = game.world.width;
 
     assetmanager.loadTileSetImage('tile_map1.png', () => {
-        console.log('eoeoe');
         resize();
         engine.start();
     })
@@ -76,7 +76,6 @@ window.onload = () => {
     });
 
     window.addEventListener('resize', () => {
-        console.log('soos');
         resize();
     });
 

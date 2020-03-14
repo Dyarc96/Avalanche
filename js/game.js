@@ -101,11 +101,9 @@
     },
 
     update: function() {
-      this.player.velocity_y += this.gravity;
-      this.player.update();
-      this.player.velocity_x *= this.friction;
-      this.player.velocity_y *= this.friction;
+      this.player.updatePosition(this.gravity, this.friction);
       this.collideWorld(this.player);
+      this.player.updateAnimation();
     }
   }
 
@@ -279,21 +277,19 @@
   }
 
   Game.World.Object.Animator = function(frame_set, delay) {
-    console.log(frame_set, delay);
     this.count = 0;
     this.delay = (delay >= 1) ? delay : 1;
     this.frame_set = frame_set;
     this.frame_index = 0;
-    console.log(frame_set);
     this.frame_value = frame_set[0];
-    this.mode = "pause";
+    this.mode = "loop";
   }
 
   Game.World.Object.Animator.prototype = {
     constructor: Game.World.Object.Animator,
     loop: function() {
       this.count ++;
-      while(this.count > 0) {
+      while(this.count > this.delay) {
         this.count -= this.delay;
         this.frame_index = (this.frame_index < this.frame_set.length - 1) ? this.frame_index + 1 : 0;
         this.frame_value = this.frame_set[this.frame_index];
@@ -301,10 +297,9 @@
     },
     changeFrameSet: function(frame_set, mode, delay = 10, frame_index = 0) {
       if (this.frame_set === frame_set) { return ;}
-
       this.count = 0;
       this.delay = delay;
-      this.frame_set = frame.set;
+      this.frame_set = frame_set;
       this.frame_index = frame_index;
       this.frame_value = frame_set[frame_index];
       this.mode = mode;
@@ -322,8 +317,6 @@
     let frame = Game.World.Object.Player.prototype.frame_sets["idle_right"];
     Game.World.Object.Animator.call(this, frame, 10);
 
-    this.color1 = '#404040';
-    this.color2 = '#f0f0f0';
     this.jumping = true;
     this.velocity_x = 0;
     this.velocity_y = 0;
@@ -344,46 +337,49 @@
       },
 
       jump:function() {
-    
         if (!this.jumping) {
-    
           this.jumping     = true;
-          this.velocity_y -= 20;
+          this.velocity_y -= 18;
         }
     
       },
 
       moveLeft: function()  { 
-        this.velocity_x -= 0.7; 
-        this.direction = -1;
+        this.velocity_x -= 0.5; 
+        this.direction_x = -1;
       },
       moveRight: function() { 
-        this.velocity_x += 0.7;
-        this.direction = 1;
+        this.velocity_x += 0.5;
+        this.direction_x = 1;
       },
       
       updateAnimation() {
-        if(this.jumping && this.direction === 1 ) {
-          console.log('player is jumping - change frame set to jump right');
+        if (this.velocity_y < 0) {
+          if (this.direction_x < 0) this.changeFrameSet(this.frame_sets["jump_left"], "loop", 5);
+          else this.changeFrameSet(this.frame_sets["jump_right"], "loop", 5);
+
+        } else if (this.direction_x < 0) {
+          if (this.velocity_x < -0.1) this.changeFrameSet(this.frame_sets["walk_left"], "loop", 5);
+          else this.changeFrameSet(this.frame_sets["idle_left"], "loop");
+    
+        } else if (this.direction_x > 0) {
+    
+          if (this.velocity_x > 0.1) this.changeFrameSet(this.frame_sets["walk_right"], "loop", 5);
+          else this.changeFrameSet(this.frame_sets["idle_right"], "loop");
+    
         }
-        if(this.jumping && this.direction === -1 ) {
-          console.log('player is jumping - change frame set to jump left');
-        }
-        if(!this.jumping && this.direction === 1 && this.velocity_x > 0.5) {
-          console.log('player is walking right');
-        }
-        if(!this.jumping && this.direction === -1 && this.velocity_x < -0.5) {
-          console.log('player is walking left');
-        }
+        this.animate();
       },
     
-      update:function() {
+      updatePosition:function(gravity, friction) {
         this.oldX = this.x;
         this.oldY = this.y;
-        this.x += this.velocity_x;
-        this.y += this.velocity_y;
-        this.updateAnimation();
-        // Game.World.Animator.loop();
+        this.velocity_y += gravity;
+        this.x    += this.velocity_x;
+        this.y    += this.velocity_y;
+    
+        this.velocity_x *= friction;
+        this.velocity_y *= friction;
       }
   };
 
@@ -393,12 +389,12 @@
 
     let f = Game.World.TileSet.Frameset;
 
-    this.frames = [new f(0, 0, 16, 16, 0, 0), new f(48, 0, 16, 16, 0, 0), // 'idle_right'
-      new f(0, 96, 16, 16, 0, 0), new f(16, 96, 16, 16, 0, 0), new f(32, 96, 16, 16, 0, 0), // 'walk_right'
-      new f(0, 0, 16, 16, 0, 0), new f(16, 0, 16, 16, 0, 0), new f(32, 0, 16, 16, 0, 0),  new f(48, 0, 16, 16, 0, 0),// 'jump_right' 
-      new f(48, 112, 16, 16, 0, 0), new f(0, 112, 16, 16, 0, 0), // 'idle_left'
-      new f(48, 16, 16, 16, 0, 0), new f(32, 16, 16, 16, 0, 0), new f(16, 16, 16, 16, 0, 0), // 'walk_left'
-      new f(48, 112, 16, 16, 0, 0), new f(32, 112, 16, 16, 0, 0), new f(16, 112, 16, 16, 0, 0), new f(0, 112, 16, 16, 0, 0)] // 'jump_left'
+    this.frames = [new f(0, 0, 16, 16, 0, -4), new f(48, 0, 16, 16, 0, -4), // 'idle_right'
+      new f(0, 96, 16, 16, 0, -4), new f(16, 96, 16, 16, 0, -4), new f(32, 96, 16, 16, 0, -4), // 'walk_right'
+      new f(0, 0, 16, 16, 0, -4), new f(16, 0, 16, 16, 0, -4), new f(32, 0, 16, 16, 0, -4),  new f(48, 0, 16, 16, 0, -4),// 'jump_right' 
+      new f(48, 112, 16, 16, 0, -4), new f(0, 112, 16, 16, 0, -4), // 'idle_left'
+      new f(48, 16, 16, 16, 0, -4), new f(32, 16, 16, 16, 0, -4), new f(16, 16, 16, 16, 0, -4), // 'walk_left'
+      new f(48, 112, 16, 16, 0, -4), new f(32, 112, 16, 16, 0, -4), new f(16, 112, 16, 16, 0, -4), new f(0, 112, 16, 16, 0, -4)] // 'jump_left'
     }
     
   Game.World.TileSet.prototype = {
@@ -418,6 +414,6 @@
     constructor: Game.World.TileSet.Frameset
   }
 
-Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);
-Object.assign(Game.World.Object.Player.prototype, Game.World.Object.Animator.prototype);
-Game.World.Object.Player.prototype.constructor = Game.World.Object.Player;
+  Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);
+  Object.assign(Game.World.Object.Player.prototype, Game.World.Object.Animator.prototype);
+  Game.World.Object.Player.prototype.constructor = Game.World.Object.Player;
