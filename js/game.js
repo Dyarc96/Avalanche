@@ -16,6 +16,7 @@
     this.player = new Game.World.Object.Player(100, 100);
     this.collider = new Game.World.Collider();
     this.tileset = new Game.World.TileSet(8, 16);
+    this.collectable = new Game.World.Object.Collectable(16, 16);
     this.columns = 14;
     this.rows = 9;
 
@@ -23,17 +24,17 @@
     
     this.map =          [09,09,09,09,09,09,09,09,09,09,09,09,09,09,
                          09,10,10,10,10,10,10,10,10,10,10,10,10,09,
-                         09,13,09,17,10,10,10,10,10,14,10,10,10,09,
-                         09,10,10,10,10,10,10,10,10,10,10,10,10,09,
-                         09,10,10,10,10,10,10,09,09,17,09,09,17,09,
-                         09,10,10,18,10,10,10,10,10,18,10,10,10,09,
-                         09,10,17,10,10,10,10,10,10,10,10,10,10,09,
+                         09,09,09,17,10,13,10,10,10,14,10,10,10,09,
+                         09,10,10,10,10,10,10,10,10,10,10,10,10,11,
+                         09,10,22,10,10,10,10,09,09,17,09,09,17,09,
+                         09,10,10,18,10,09,10,10,10,18,10,10,10,09,
+                         09,10,17,10,10,10,10,10,10,10,22,10,10,09,
                          09,10,09,10,10,10,10,10,10,10,10,10,10,09,
                          09,09,09,09,09,09,09,09,09,09,09,09,09,09];
               
     this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,08,08,
                          04,00,00,00,00,00,00,00,00,00,00,00,00,02,
-                         04,08,08,13,00,00,00,00,00,00,00,00,00,02,
+                         04,09,09,13,00,15,00,00,00,00,00,00,00,02,
                          04,00,00,00,00,00,00,00,00,00,00,00,00,02,
                          04,00,00,00,00,00,00,11,09,09,09,09,09,02,
                          04,00,00,00,00,15,00,00,00,00,00,00,00,02,
@@ -394,7 +395,9 @@
       new f(0, 0, 16, 16, 0, -4), new f(16, 0, 16, 16, 0, -4), new f(32, 0, 16, 16, 0, -4),  new f(48, 0, 16, 16, 0, -4),// 'jump_right' 
       new f(48, 112, 16, 16, 0, -4), new f(0, 112, 16, 16, 0, -4), // 'idle_left'
       new f(48, 16, 16, 16, 0, -4), new f(32, 16, 16, 16, 0, -4), new f(16, 16, 16, 16, 0, -4), // 'walk_left'
-      new f(48, 112, 16, 16, 0, -4), new f(32, 112, 16, 16, 0, -4), new f(16, 112, 16, 16, 0, -4), new f(0, 112, 16, 16, 0, -4)] // 'jump_left'
+      new f(48, 112, 16, 16, 0, -4), new f(32, 112, 16, 16, 0, -4), new f(16, 112, 16, 16, 0, -4), new f(0, 112, 16, 16, 0, -4), // 'jump_left'
+      new f(32, 48, 16, 16, 0, -4), // 'crate_opened'
+      new f(48, 48, 16, 16, 0, -4)] // 'crate_closed' 
     }
     
   Game.World.TileSet.prototype = {
@@ -412,6 +415,23 @@
 
   Game.World.TileSet.Frameset.prototype = {
     constructor: Game.World.TileSet.Frameset
+  }
+
+// Displaying new thing => frameSet
+
+  Game.World.Object.Collectable = function(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  Game.World.Object.Collectable.prototype = {
+    constructor: Game.World.Object.Collectable,
+
+    frames: {
+      "idle": [18],
+      "open": [18, 19]
+    }
+    // Check for collision - collider 
   }
 
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);

@@ -20,7 +20,7 @@ const Display = function(canvas) {
       }
     }
 
-    this.drawPlayer = function(image, source_x, source_y, destination_x, destination_y, width, height) {
+    this.drawObject = function(image, source_x, source_y, destination_x, destination_y, width, height) {
       this.buffer.drawImage(image, source_x, source_y, width, height, Math.round(destination_x), Math.round(destination_y), width, height);
     }
   

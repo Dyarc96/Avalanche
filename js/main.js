@@ -31,11 +31,15 @@ window.onload = () => {
 
     var render = function() {
         let frame = game.world.tileset.frames[game.world.player.frame_value];
+        let crate = game.world.tileset.frames[game.world.collectable.frames["idle"]];
         display.drawMap(game.world.map, game.world.columns, assetmanager.tile_set_image);
-        display.drawPlayer(assetmanager.tile_set_image,
+        display.drawObject(assetmanager.tile_set_image,
             frame.x, frame.y,
             game.world.player.x + Math.floor(game.world.player.width * 0.5 - frame.width * 0.5) + frame.offsetX,
             game.world.player.y + frame.offsetY, frame.width, frame.height);
+        display.drawObject(assetmanager.tile_set_image,
+            crate.x, crate.y, game.world.collectable.x, game.world.collectable.y, crate.height, crate.width
+            )
         display.render();
     }
 
