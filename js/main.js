@@ -31,7 +31,7 @@ window.onload = () => {
 
     var render = function() {
         let frame = game.world.tileset.frames[game.world.player.frame_value];
-        let crate = game.world.tileset.frames[game.world.collectable.frames["idle"]];
+        let crate = game.world.tileset.frames[game.world.collectable.frame_value];
         display.drawMap(game.world.map, game.world.columns, assetmanager.tile_set_image);
         display.drawObject(assetmanager.tile_set_image,
             frame.x, frame.y,

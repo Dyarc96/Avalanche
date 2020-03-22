@@ -25,8 +25,6 @@ const Display = function(canvas) {
     }
   
     this.fill = function(color) {
-  
-      // this.buffer.drawImage(background, this.buffer.canvas.width, this.buffer.canvas.height);
       this.buffer.fillStyle = color;
       this.buffer.fillRect(0, 0, this.buffer.canvas.width, this.buffer.canvas.height);
   

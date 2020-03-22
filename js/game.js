@@ -40,7 +40,7 @@
                          04,00,00,00,00,15,00,00,00,00,00,00,00,02,
                          04,00,07,00,00,00,00,00,00,00,00,00,00,02,
                          04,00,06,00,00,00,00,00,00,00,00,00,00,02,
-                         13,01,01,01,01,01,01,01,01,01,01,03,08,08];
+                         13,01,01,01,01,01,01,01,01,01,01,03,03,08];
     
     this.height = this.tile_size * this.rows;
     this.width = this.tile_size * this.columns;
@@ -105,6 +105,7 @@
       this.player.updatePosition(this.gravity, this.friction);
       this.collideWorld(this.player);
       this.player.updateAnimation();
+      this.collectable.getCollision(this.player.x, this.player.y);
     }
   }
 
@@ -322,6 +323,7 @@
     this.velocity_x = 0;
     this.velocity_y = 0;
     this.direction = 1;
+    this.collection = 0;
 };
     
   Game.World.Object.Player.prototype = {
@@ -356,7 +358,7 @@
       
       updateAnimation() {
         if (this.velocity_y < 0) {
-          if (this.direction_x < 0) this.changeFrameSet(this.frame_sets["jump_left"], "loop", 5);
+          if (this.direction_x < 0.1) this.changeFrameSet(this.frame_sets["jump_left"], "loop", 5);
           else this.changeFrameSet(this.frame_sets["jump_right"], "loop", 5);
 
         } else if (this.direction_x < 0) {
@@ -417,23 +419,50 @@
     constructor: Game.World.TileSet.Frameset
   }
 
-// Displaying new thing => frameSet
+  // Super object for making crates - specyfing number and placement
+
+  Game.World.Collectables = function(num, placement) {
+    this.num = num;
+    this.placement = placement;
+  }
+
+  Game.World.Collectables.prototype = {
+    constructor: Game.World.Collectables
+  }
 
   Game.World.Object.Collectable = function(x, y) {
+    let frame = Game.World.Object.Collectable.prototype.frame_sets["open"];
+    Game.World.Object.Animator.call(this, frame, 10);
+
     this.x = x;
     this.y = y;
+    this.opened = false;
   }
+
+  // Check for collision inside collectable
+  // How to make multiple objects like it
 
   Game.World.Object.Collectable.prototype = {
     constructor: Game.World.Object.Collectable,
 
-    frames: {
+    frame_sets: {
       "idle": [18],
-      "open": [18, 19]
+      "open": [19]
+    },
+
+    getCollision: function(playerX, playerY) {
+      if(playerX <= this.x + 16 && playerY < this.y + 20) {
+        this.changeFrameSet(this.frame_sets["open"], "pause");
+        this.opened = true;
+      } else {
+        if(!this.opened) {
+          this.changeFrameSet(this.frame_sets["idle"], "pause");
+        }
+      }
     }
-    // Check for collision - collider 
   }
 
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.Animator.prototype);
+  Object.assign(Game.World.Object.Collectable.prototype, Game.World.Object.Animator.prototype);
   Game.World.Object.Player.prototype.constructor = Game.World.Object.Player;
