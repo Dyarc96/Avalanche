@@ -17,6 +17,12 @@ window.onload = () => {
                 callback();
             }, { once: true});
             this.tile_set_image.src = url;
+        },
+
+        fetchZone: async function(url, callback) {
+            let data = await fetch(url).then(response => response.json());
+            console.log('how many more times');
+            game.world.setup(data);
         }
     }
     
@@ -69,6 +75,10 @@ window.onload = () => {
     assetmanager.loadTileSetImage('tile_map1.png', () => {
         resize();
         engine.start();
+    });
+
+    assetmanager.fetchZone('assets/zone1.json', () => {
+        console.log('eoeoe');
     })
 
     window.addEventListener('keydown', e => {

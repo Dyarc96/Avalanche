@@ -51,15 +51,15 @@
   
     constructor: Game.World,
   
-    collideWorld: function(object) {
-      let playerBottom = object.getBottom();
-      let playerTop = object.getTop();
-      let playerLeft = object.getLeft();
-      let playerRight = object.getRight();
-      let bottomTile = playerBottom / this.tile_size;
-      let leftTile = playerLeft / this.tile_size;
-      let rightTile = playerRight / this.tile_size;
-      let topTile = playerTop / this.tile_size;
+    collideObject: function(object) {
+      let objectBottom = object.getBottom();
+      let objectTop = object.getTop();
+      let objectLeft = object.getLeft();
+      let objectRight = object.getRight();
+      let bottomTile = objectBottom / this.tile_size;
+      let leftTile = objectLeft / this.tile_size;
+      let rightTile = objectRight / this.tile_size;
+      let topTile = objectTop / this.tile_size;
 
 
       if (object.x < 0) { 
@@ -103,9 +103,17 @@
 
     update: function() {
       this.player.updatePosition(this.gravity, this.friction);
-      this.collideWorld(this.player);
+      this.collideObject(this.player);
       this.player.updateAnimation();
       this.collectable.getCollision(this.player.x, this.player.y);
+      console.log(this.player.x, this.player.y);
+    },
+    setup: function(data) {
+      this.map = data["graphical-map"];
+      this.collisionMap = data["collision-map"];
+      this.columns = data["columns"];
+      this.rows = data["columns"];
+      this.tile_size = data["tile-size"];
     }
   }
 
@@ -460,6 +468,14 @@
         }
       }
     }
+  }
+
+  Game.World.Object.Door = function() {
+
+  }
+
+  Game.World.Object.Door.prototype = {
+    constructor: Game.World.Object.Door
   }
 
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);
