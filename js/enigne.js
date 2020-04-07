@@ -12,6 +12,8 @@ const Engine = function(time_step, update, render) {
   
     this.run = function(time_stamp) {// This is one cycle of the game loop
   
+      this.animation_frame_request = window.requestAnimationFrame(this.handleRun);
+
       this.accumulated_time += time_stamp - this.time;
       this.time = time_stamp;
   
@@ -49,7 +51,6 @@ const Engine = function(time_step, update, render) {
   
       }
   
-      this.animation_frame_request = window.requestAnimationFrame(this.handleRun);
   
     };
   
@@ -69,6 +70,8 @@ const Engine = function(time_step, update, render) {
   
     },
   
-    stop:function() { window.cancelAnimationFrame(this.animation_frame_request); }
+    stop: function() { 
+      window.cancelAnimationFrame(this.animation_frame_request); 
+    }
   
   };

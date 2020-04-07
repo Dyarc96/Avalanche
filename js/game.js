@@ -19,6 +19,9 @@
     this.collectable = new Game.World.Object.Collectable(16, 16);
     this.columns = 14;
     this.rows = 9;
+    this.door = undefined;
+    this.doors = {};
+    this.zone_id = 00;
 
     this.tile_size = 16;
     
@@ -34,9 +37,9 @@
               
     this.collisionMap = [13,08,08,08,08,08,08,08,08,08,08,08,08,08,
                          04,00,00,00,00,00,00,00,00,00,00,00,00,02,
-                         04,09,09,13,00,15,00,00,00,00,00,00,00,02,
-                         04,00,00,00,00,00,00,00,00,00,00,00,00,02,
-                         04,00,00,00,00,00,00,11,09,09,09,09,09,02,
+                         04,09,09,13,00,15,00,00,00,00,00,00,00,00,
+                         04,00,00,00,00,00,00,00,00,00,00,00,00,00,
+                         04,00,00,00,00,00,00,11,09,09,09,00,00,00,
                          04,00,00,00,00,15,00,00,00,00,00,00,00,02,
                          04,00,07,00,00,00,00,00,00,00,00,00,00,02,
                          04,00,06,00,00,00,00,00,00,00,00,00,00,02,
@@ -106,7 +109,12 @@
       this.collideObject(this.player);
       this.player.updateAnimation();
       this.collectable.getCollision(this.player.x, this.player.y);
-      console.log(this.player.x, this.player.y);
+      // this.newLevelTrigger = this.door.collideObject(this.player);
+      for(let i = this.doors.length - 1; i >= 0; i--) {
+        if(this.doors[i].collideObject(this.player)) {
+          this.door = this.doors[i];
+        }
+      }
     },
     setup: function(data) {
       this.map = data["graphical-map"];
@@ -114,6 +122,18 @@
       this.columns = data["columns"];
       this.rows = data["columns"];
       this.tile_size = data["tile-size"];
+      this.doors = data["doors"];
+
+      for(let i = this.doors.length - 1; i >= 0; i--) {
+        this.doors[i] = new Game.World.Object.Door(
+          this.doors[i]["x"],
+          this.doors[i]["y"], 
+          this.doors[i]["width"], 
+          this.doors[i]["height"], 
+          this.doors[i]["destination_x"], 
+          this.doors[i]["destination_y"],
+          this.doors[i]["destination_id"]);
+      }
     }
   }
 
@@ -447,9 +467,6 @@
     this.opened = false;
   }
 
-  // Check for collision inside collectable
-  // How to make multiple objects like it
-
   Game.World.Object.Collectable.prototype = {
     constructor: Game.World.Object.Collectable,
 
@@ -470,12 +487,21 @@
     }
   }
 
-  Game.World.Object.Door = function() {
-
+  Game.World.Object.Door = function(x, y, width, height, destination_x, destination_y, destination_id) {
+    Game.World.Object.call(this, x, y, width, height);
+    this.destination_x = destination_x;
+    this.destination_y = destination_y;
+    this.destination_id = destination_id;
   }
 
   Game.World.Object.Door.prototype = {
-    constructor: Game.World.Object.Door
+    constructor: Game.World.Object.Door,
+    collideObject: function(playerCoords) {
+      if(this.x <= playerCoords.x && this.y >= playerCoords.y) {
+        return true;
+      }
+      return false;
+    }
   }
 
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);

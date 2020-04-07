@@ -21,14 +21,19 @@ window.onload = () => {
 
         fetchZone: async function(url, callback) {
             let data = await fetch(url).then(response => response.json());
-            console.log('how many more times');
-            game.world.setup(data);
+            callback(data);
         }
     }
     
     var onKeyDown = function(keytype, keycode){
         controller.onkeydown(keytype, keycode);
     }
+
+    // var checkForDoor = function(doorTrigger, destination) {
+    //     if(doorTrigger) {
+    //         loadNewLevel(destination);
+    //     }
+    // }
 
     var resize = function(event) {
         display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, game.world.height / game.world.width);
@@ -47,6 +52,9 @@ window.onload = () => {
             crate.x, crate.y, game.world.collectable.x, game.world.collectable.y, crate.height, crate.width
             )
         display.render();
+
+        // checkForDoor(game.world.newLevelTrigger, game.world.door["destination_id"]);
+
     }
 
     var update = function() {
@@ -61,7 +69,23 @@ window.onload = () => {
             controller.up.active = false;
         }
         game.update();
+
+        if(game.world.door) {
+            engine.stop();
+            
+            assetmanager.fetchZone(`assets/zone${game.world.door["destination_id"]}.json`, (zone) => {
+                game.world.setup(zone);
+            })
+            
+        }
     }
+
+    // var loadNewLevel = () => {
+    //     engine.stop();
+    //     assetmanager.fetchZone('assets/zone2.json', (data) => {
+    //         game.world.setup(data);
+    //     })
+    // }
 
     var display = new Display(document.querySelector('canvas'));
     var controller = new Controller();
@@ -72,13 +96,13 @@ window.onload = () => {
     display.buffer.canvas.height = game.world.height;
     display.buffer.canvas.width = game.world.width;
 
-    assetmanager.loadTileSetImage('tile_map1.png', () => {
-        resize();
-        engine.start();
-    });
+    assetmanager.fetchZone('assets/zone0.json', (data) => {
+        game.world.setup(data);
 
-    assetmanager.fetchZone('assets/zone1.json', () => {
-        console.log('eoeoe');
+        assetmanager.loadTileSetImage('tile_map1.png', () => {
+            resize();
+            engine.start();
+        });
     })
 
     window.addEventListener('keydown', e => {
