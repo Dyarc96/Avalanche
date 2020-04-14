@@ -13,7 +13,7 @@
   Game.World = function(friction = 0.9, gravity = 3) {
     this.friction = friction;
     this.gravity = gravity;
-    this.player = new Game.World.Object.Player(100, 100);
+    this.player = new Game.World.Object.Player(5, 5);
     this.collider = new Game.World.Collider();
     this.tileset = new Game.World.TileSet(8, 16);
     this.collectable = new Game.World.Object.Collectable(16, 16);

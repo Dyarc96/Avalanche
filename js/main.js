@@ -73,10 +73,16 @@ window.onload = () => {
         if(game.world.door) {
             engine.stop();
             
-            assetmanager.fetchZone(`assets/zone${game.world.door["destination_id"]}.json`, (zone) => {
+            let destination_id = game.world.door["destination_id"];
+            console.log(destination_id);
+
+            assetmanager.fetchZone(`assets/zone${destination_id}.json`, (zone) => {
                 game.world.setup(zone);
             })
-            
+
+            engine.start();
+            game.world.door = undefined;
+            return;
         }
     }
 
