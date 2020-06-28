@@ -20,6 +20,7 @@ window.onload = () => {
         },
 
         fetchZone: async function(url, callback) {
+            console.log(url, callback);
             let data = await fetch(url).then(response => response.json());
             callback(data);
         }
@@ -77,21 +78,15 @@ window.onload = () => {
             console.log(destination_id);
 
             assetmanager.fetchZone(`assets/zone${destination_id}.json`, (zone) => {
+                console.log(zone);
                 game.world.setup(zone);
+
+                engine.start();
             })
 
-            engine.start();
-            game.world.door = undefined;
             return;
         }
     }
-
-    // var loadNewLevel = () => {
-    //     engine.stop();
-    //     assetmanager.fetchZone('assets/zone2.json', (data) => {
-    //         game.world.setup(data);
-    //     })
-    // }
 
     var display = new Display(document.querySelector('canvas'));
     var controller = new Controller();

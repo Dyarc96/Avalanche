@@ -21,7 +21,6 @@
     this.rows = 9;
     this.door = undefined;
     this.doors = {};
-    this.zone_id = 00;
 
     this.tile_size = 16;
     
@@ -111,8 +110,9 @@
       this.collectable.getCollision(this.player.x, this.player.y);
       // this.newLevelTrigger = this.door.collideObject(this.player);
       for(let i = this.doors.length - 1; i >= 0; i--) {
-        if(this.doors[i].collideObject(this.player)) {
-          this.door = this.doors[i];
+        let door = this.doors[i];
+        if(door.collideObject(this.player)) {
+          this.door = door;
         }
       }
     },
@@ -123,6 +123,8 @@
       this.rows = data["columns"];
       this.tile_size = data["tile-size"];
       this.doors = data["doors"];
+      this.destination_x = data["destination_x"];
+      this.destination_y = data["destination_y"];
 
       for(let i = this.doors.length - 1; i >= 0; i--) {
         this.doors[i] = new Game.World.Object.Door(
@@ -133,6 +135,27 @@
           this.doors[i]["destination_x"], 
           this.doors[i]["destination_y"],
           this.doors[i]["destination_id"]);
+      }
+
+      if (this.door) {
+        console.log(this.door.destination_x, this.door.destination_y)
+        if (this.door.destination_x != -1) {
+          console.log(this.door.destination_x, this.door.destination_y);
+          console.log(this.player);
+          this.player.setCenterX   (this.door.destination_x);
+          this.player.setOldCenterX(this.door.destination_x);// It's important to reset the old position as well.
+  
+        }
+  
+        if (this.door.destination_y != -1) {
+  
+          this.player.setCenterY   (this.door.destination_y);
+          this.player.setOldCenterY(this.door.destination_y);
+  
+        }
+  
+        this.door = undefined;// Make sure to reset this.door so we don't trigger a zone load.
+  
       }
     }
   }
@@ -272,13 +295,25 @@
       return this.x;
     },
     getRight: function() { 
-      return this.x + this.width;
+      return Number(this.x) + Number(this.width);
     },
     getBottom: function() {
-      return this.y + this.height;
+      return Number(this.y) + Number(this.height);
     },
     getTop: function() {
       return this.y;
+    },
+    getCenterX: function()  { 
+      return this.x + this.width  * 0.5; 
+    },
+    getCenterY: function()  { 
+      return this.y + this.height * 0.5; 
+    },
+    setCenterX: function(x) {
+      this.x = x - this.width * 0.5;
+    },
+    setCenterY: function(y) {
+      this.y = y - this.height * 0.5;
     },
     getOldLeft: function() {
       return this.oldX;
@@ -304,6 +339,12 @@
     setOldTop: function(y) {
       this.oldY = y;
     },
+    setOldCenterX: function(x) { this.x_old = x    - this.width  * 0.5; },
+    setOldCenterY: function(y) { this.y_old = y    - this.height * 0.5; },
+    setPosition: function(x, y) {
+      this.x = x;
+      this.y = y;
+    }
   }
 
   Game.World.Object.Animator = function(frame_set, delay) {
@@ -496,13 +537,19 @@
 
   Game.World.Object.Door.prototype = {
     constructor: Game.World.Object.Door,
-    collideObject: function(playerCoords) {
-      if(this.x <= playerCoords.x && this.y >= playerCoords.y) {
-        return true;
-      }
-      return false;
+    collideObject(object) {
+      let center_x = object.getCenterX();
+      let center_y = object.getCenterY();
+   
+      if (center_x < this.getLeft() || center_x > this.getRight() ||
+          center_y < this.getTop()  || center_y > this.getBottom()) return false;
+   
+      return true;
+   
     }
   }
+  Object.assign(Game.World.Object.Door.prototype, Game.World.Object.prototype);
+  Game.World.Object.Door.prototype.constructor = Game.World.Object.Door;
 
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.prototype);
   Object.assign(Game.World.Object.Player.prototype, Game.World.Object.Animator.prototype);

@@ -2,14 +2,14 @@
     "id": "1",
     "doors": [
         {
-            "x": "212",
-            "y": "68",
+            "x": "210",
+            "y": "54",
             "width": "16",
             "height": "16",
             "id": "1",
             "destination_id": "1",
-            "destination_x": "1",
-            "destination_y": "0"
+            "destination_x": "16",
+            "destination_y": "112"
         }
     ],
     "graphical-map": [9,9,9,9,9,9,9,9,9,9,9,9,9,9,
